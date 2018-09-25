@@ -28,14 +28,14 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-        if (v < 0 || w < 0 || v > digraph.V() - 1 || w > digraph.V() - 1)
-            throw new java.lang.IllegalArgumentException();
+       validateVertex(v,w);
         walkThroughPath(v, w);
         return common_ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        validateIterable(v,w);
         int shortestPathInList = Integer.MAX_VALUE;
         for (int i : v) {
             for (int j : w) {
@@ -49,6 +49,7 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        validateIterable(v,w);
         int shortestPathInList = Integer.MAX_VALUE;
         int shortestAncInList = -1;
         for (int i : v) {
@@ -93,6 +94,19 @@ public class SAP {
     private void validateVertex(int v, int w) {
         if (v < 0 || w < 0 || v > digraph.V() - 1 || w > digraph.V() - 1)
             throw new java.lang.IllegalArgumentException();
+    }
+
+    private void validateIterable(Iterable<Integer> v, Iterable<Integer> w) {
+        if (v == null || w == null)
+            throw new IllegalArgumentException();
+        for(Integer i : v){
+            if( i == null)
+                throw new IllegalArgumentException();
+        }
+        for(Integer i : w){
+            if( i == null)
+                throw new IllegalArgumentException();
+        }
     }
 
     // do unit testing of this class
