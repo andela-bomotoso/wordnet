@@ -1,55 +1,55 @@
 import edu.princeton.cs.algs4.In;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class WordNet {
-    private HashMap<Integer, String> wordnet_nouns;
+    private HashMap<Integer, String> wordnet_synsets;
+    private HashMap<Integer, String> wordnet_hypernyms;
+
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
-        wordnet_nouns = new HashMap<Integer, String>();
+        wordnet_synsets = new HashMap<Integer, String>();
         In synsetsInput = new In(synsets);
         while ((synsetsInput.hasNextLine())) {
             String currentLine = synsetsInput.readLine();
             int id = Integer.parseInt(currentLine.split(",")[0]);
-            String noun = currentLine.split(",")[1];
-            wordnet_nouns.put(id, noun);
+            String nouns = currentLine.split(",")[1];
+            wordnet_synsets.put(id, nouns);
         }
 
-        In hypernymInput = new In(hypernyms);
-
-
-
     }
+
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
         HashSet<String> nouns = new HashSet<String>();
-        for (String noun : wordnet_nouns.values()) {
-            String cur_noun[] = noun.split(" ");
-            for (String str : cur_noun)
-                nouns.add(str);
+        for (String s : wordnet_synsets.values()) {
+            for (String t : s.split(" ")) {
+                nouns.add(t);
+            }
         }
         return nouns;
     }
 
     // is the word a WordNet noun?
     public boolean isNoun(String word) {
-        return wordnet_nouns.values().contains(word);
+        Iterable<String> iterable = nouns();
+        for (String str : nouns()) {
+            if (str.equals(word))
+                return true;
+        }
+        return false;
     }
 
     // distance between nounA and nounB (defined below)
     public int distance(String nounA, String nounB) {
         int nounA_ID = 0, nounB_ID = 0;
-        for(Map.Entry entry: wordnet_nouns.entrySet()){
-            if(nounA.equals(entry.getValue())){
-                nounA_ID = (Integer)entry.getKey();
-                 //breaking because its one to one map
-            }else if(nounB.equals(entry.getValue())){
-                nounB_ID = (Integer)entry.getKey();
+        for (Map.Entry entry : wordnet_synsets.entrySet()) {
+            if (nounA.equals(entry.getValue())) {
+                nounA_ID = (Integer) entry.getKey();
+            } else if (nounB.equals(entry.getValue())) {
+                nounB_ID = (Integer) entry.getKey();
             }
         }
 
@@ -64,6 +64,8 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-
+        WordNet wordNet = new WordNet("synsets.txt", "hypernyms.txt");
+        // System.out.println(((Collection<?>) wordNet.nouns()).size());
+        System.out.println(wordNet.isNoun("clockwork_universe"));
     }
 }

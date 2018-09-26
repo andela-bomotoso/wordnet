@@ -1,8 +1,5 @@
 import edu.princeton.cs.algs4.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class SAP {
     private Digraph digraph;
     private BreadthFirstDirectedPaths[] bfdp;
@@ -28,45 +25,29 @@ public class SAP {
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
-       validateVertex(v,w);
+
         walkThroughPath(v, w);
         return common_ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        validateIterable(v,w);
-        int shortestPathInList = Integer.MAX_VALUE;
-        for (int i : v) {
-            for (int j : w) {
-                walkThroughPath(i, j);
-                if (shortest_path < shortestPathInList)
-                    shortestPathInList = shortest_path;
-            }
-        }
-        return shortestPathInList;
+        walkthroughManyPaths(v, w);
+        return shortest_path;
     }
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        validateIterable(v,w);
-        int shortestPathInList = Integer.MAX_VALUE;
-        int shortestAncInList = -1;
-        for (int i : v) {
-            for (int j : w) {
-                walkThroughPath(i, j);
-                if (shortest_path < shortestPathInList) {
-                    shortestPathInList = shortest_path;
-                    shortestAncInList = common_ancestor;
-                }
-            }
-        }
-        return shortestAncInList;
+        walkthroughManyPaths(v, w);
+        return common_ancestor;
     }
 
     //loop through all the vertices and see if there is an ancestor between v and w
     private void walkThroughPath(int v, int w) {
+
+        validateVertex(v, w);
         resetSAP();
+
         bfdp[v] = new BreadthFirstDirectedPaths(digraph, v);
         bfdp[w] = new BreadthFirstDirectedPaths(digraph, w);
 
@@ -79,6 +60,30 @@ public class SAP {
                 common_ancestor = i;
             }
         }
+
+        if (shortest_path == Integer.MAX_VALUE) {
+            shortest_path = -1;
+            common_ancestor = -1;
+        }
+    }
+
+    private void walkthroughManyPaths(Iterable<Integer> v, Iterable<Integer> w) {
+        validateIterable(v, w);
+        resetSAP();
+
+        BreadthFirstDirectedPaths bfs = new BreadthFirstDirectedPaths(digraph, v);
+        BreadthFirstDirectedPaths bfs1 = new BreadthFirstDirectedPaths(digraph, w);
+
+        for (int i = 0; i < digraph.V(); i++) {
+            if (bfs.hasPathTo(i) && bfs1.hasPathTo(i))
+                path_distance = bfs.distTo(i) + bfs1.distTo(i);
+
+            if (path_distance < shortest_path && path_distance != 0) {
+                shortest_path = path_distance;
+                common_ancestor = i;
+            }
+        }
+
         if (shortest_path == Integer.MAX_VALUE) {
             shortest_path = -1;
             common_ancestor = -1;
@@ -99,12 +104,12 @@ public class SAP {
     private void validateIterable(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null)
             throw new IllegalArgumentException();
-        for(Integer i : v){
-            if( i == null)
+        for (Integer i : v) {
+            if (i == null)
                 throw new IllegalArgumentException();
         }
-        for(Integer i : w){
-            if( i == null)
+        for (Integer i : w) {
+            if (i == null)
                 throw new IllegalArgumentException();
         }
     }
@@ -114,17 +119,17 @@ public class SAP {
         In in = new In(args[0]);
         Digraph G = new Digraph(in);
         SAP sap = new SAP(G);
-        ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(13, 23, 24));
-        ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(6, 16, 17));
-        int length = sap.length(A, B);
-        int ancestor = sap.ancestor(A, B);
-        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-//        while (!StdIn.isEmpty()) {
-//            int v = StdIn.readInt();
-//            int w = StdIn.readInt();
-//            int length = sap.length(v, w);
-//            int ancestor = sap.ancestor(v, w);
-//            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-//        }
+//        ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(13, 23, 24));
+//        ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(6, 16, 17));
+        //int length = sap.length(A, B);
+        //int ancestor = sap.ancestor(A, B);
+        // StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        while (!StdIn.isEmpty()) {
+            int v = StdIn.readInt();
+            int w = StdIn.readInt();
+            int length = sap.length(v, w);
+            int ancestor = sap.ancestor(v, w);
+            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        }
     }
 }
