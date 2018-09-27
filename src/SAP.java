@@ -1,5 +1,8 @@
 import edu.princeton.cs.algs4.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class SAP {
     private Digraph digraph;
     private BreadthFirstDirectedPaths[] bfdp;
@@ -19,20 +22,22 @@ public class SAP {
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
         validateVertex(v, w);
-        walkThroughPath(v, w);
+        //walkThroughPath(v, w);
+        calculatePath(v,w);
         return shortest_path;
     }
 
     // a common ancestor of v and w that participates in a shortest ancestral path; -1 if no such path
     public int ancestor(int v, int w) {
 
-        walkThroughPath(v, w);
+        //walkThroughPath(v, w);
+        calculatePath(v,w);
         return common_ancestor;
     }
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        walkthroughManyPaths(v, w);
+        //walkthroughManyPaths(v, w);
         return shortest_path;
     }
 
@@ -48,11 +53,12 @@ public class SAP {
         validateVertex(v, w);
         resetSAP();
 
-        bfdp[v] = new BreadthFirstDirectedPaths(digraph, v);
+        BreadthFirstDirectedPaths bfdpv = new BreadthFirstDirectedPaths(digraph, v);
+        BreadthFirstDirectedPaths bfdpw = new BreadthFirstDirectedPaths(digraph, w);
         bfdp[w] = new BreadthFirstDirectedPaths(digraph, w);
 
         for (int i = 0; i < digraph.V(); i++) {
-            if (bfdp[v].hasPathTo(i) && bfdp[w].hasPathTo(i)) {
+            if (bfdpv.hasPathTo(i) && bfdpw.hasPathTo(i)) {
                 path_distance = bfdp[v].distTo(i) + bfdp[w].distTo(i);
             }
             if (path_distance < shortest_path && path_distance != 0) {
@@ -73,6 +79,7 @@ public class SAP {
 
         BreadthFirstDirectedPaths bfs = new BreadthFirstDirectedPaths(digraph, v);
         BreadthFirstDirectedPaths bfs1 = new BreadthFirstDirectedPaths(digraph, w);
+
 
         for (int i = 0; i < digraph.V(); i++) {
             if (bfs.hasPathTo(i) && bfs1.hasPathTo(i))
@@ -114,6 +121,32 @@ public class SAP {
         }
     }
 
+    private void calculatePath(int v, int w)
+    {
+        resetSAP();
+        bfdp[v] = new BreadthFirstDirectedPaths(digraph, v);
+        bfdp[w] = new BreadthFirstDirectedPaths(digraph, w);
+
+        for(int i = 0; i < digraph.V(); i++)
+        {
+            if(bfdp[v].hasPathTo(i) && bfdp[w].hasPathTo(i))
+            {
+
+                int distance = bfdp[v].distTo(i) +  bfdp[w].distTo(i);
+                if(distance < shortest_path)
+                    shortest_path = distance;
+                common_ancestor = i;
+            }
+        }
+
+        if(shortest_path == Integer.MAX_VALUE)
+        {
+            shortest_path = - 1;
+            common_ancestor = -1;
+        }
+
+    }
+
     // do unit testing of this class
     public static void main(String[] args) {
         In in = new In(args[0]);
@@ -121,9 +154,9 @@ public class SAP {
         SAP sap = new SAP(G);
 //        ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(13, 23, 24));
 //        ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(6, 16, 17));
-        //int length = sap.length(A, B);
-        //int ancestor = sap.ancestor(A, B);
-        // StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+//        int length = sap.length(A, B);
+//        int ancestor = sap.ancestor(A, B);
+//        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
         while (!StdIn.isEmpty()) {
             int v = StdIn.readInt();
             int w = StdIn.readInt();
