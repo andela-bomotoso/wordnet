@@ -38,6 +38,7 @@ public class SAP {
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
         //walkthroughManyPaths(v, w);
+        walkthroughManyPaths(v, w);
         return shortest_path;
     }
 
@@ -152,17 +153,17 @@ public class SAP {
         In in = new In(args[0]);
         Digraph G = new Digraph(in);
         SAP sap = new SAP(G);
-//        ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(13, 23, 24));
-//        ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(6, 16, 17));
-//        int length = sap.length(A, B);
-//        int ancestor = sap.ancestor(A, B);
-//        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-        while (!StdIn.isEmpty()) {
-            int v = StdIn.readInt();
-            int w = StdIn.readInt();
-            int length = sap.length(v, w);
-            int ancestor = sap.ancestor(v, w);
-            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-        }
+        ArrayList<Integer> A = new ArrayList<Integer>(Arrays.asList(13, 23, 24));
+        ArrayList<Integer> B = new ArrayList<Integer>(Arrays.asList(6, 16, 17));
+        int length = sap.length(A, B);
+        int ancestor = sap.ancestor(A, B);
+        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+//        while (!StdIn.isEmpty()) {
+//            int v = StdIn.readInt();
+//            int w = StdIn.readInt();
+//            int length = sap.length(v, w);
+//            int ancestor = sap.ancestor(v, w);
+//            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+//        }
     }
 }
